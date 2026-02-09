@@ -17,7 +17,7 @@ def decorate-file [input] {
             let hex = ($match | get -o fg | default "#50fa7b")
             return $"(ansi $hex)($match.text)(ansi reset) ($path)"
         }
-        return $"(ansi blue)󰉋(ansi reset) ($path)"
+        return $"(ansi red)󰉋(ansi reset) ($path)"
     } else {
         let exact_file = ($icons.files | where name == $name | first | default null)
         let match_file = if $exact_file != null {
