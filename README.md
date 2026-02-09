@@ -22,7 +22,7 @@
     Save the `lsi.nu` file to a convenient location, for example, `~/.config/nushell/lsi.nu`.
 
     ```bash
-    curl -fsSL https://raw.githubusercontent.com/CRAG666/nu_ls_icons/main/archivo.nu | save ~/.config/nushell/archivo.nu
+    curl -fsSL https://raw.githubusercontent.com/CRAG666/nu_ls_icons/main/lsi.nu | save ~/.config/nushell/lsi.nu
     ```
 
 2.  **Source the Script:**
