@@ -64,7 +64,7 @@ def decorate-file [input] {
 
 def --wrapped ls [...args] {
     let result = (
-        nu -c $"ls -t ($args | str join ' ') | to nuon"
+        nu -c $"ls ($args | str join ' ') | to nuon"
         | complete
     )
 
