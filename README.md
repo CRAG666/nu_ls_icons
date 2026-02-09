@@ -19,10 +19,10 @@
 ### Steps
 
 1.  **Save the Script:**
-    Save the `lsi.nu` file to a convenient location, for example, `~/.config/nushell/lsi.nu`.
+    Save (or update) the `lsi.nu` file to a convenient location, for example, `~/.config/nushell/lsi.nu`.
 
     ```bash
-    curl -fsSL https://raw.githubusercontent.com/CRAG666/nu_ls_icons/main/lsi.nu | save ~/.config/nushell/lsi.nu
+    curl -fsSL https://raw.githubusercontent.com/CRAG666/nu_ls_icons/main/lsi.nu | save -f ~/.config/nushell/lsi.nu
     ```
 
 2.  **Source the Script:**
@@ -41,7 +41,7 @@ Once installed, simply use the `ls` command as you normally would. The output wi
 ls -la
 ```
 
-aditionally you can use the `gst` command for git status.
+aditionally you can use the `gst` command for git status with icons.
 
 ```bash
 gst
