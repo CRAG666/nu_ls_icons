@@ -15,9 +15,9 @@ def decorate-file [input] {
         let match = ($icons.dirs | where name == $name | first | default null)
         if $match != null {
             let hex = ($match | get -o fg | default "#50fa7b")
-            return $"(ansi $hex)($match.text)(ansi reset) ($path)"
+            return $"(ansi $hex)($match.text) ($path)(ansi reset)"
         }
-        return $"(ansi red)󰉋(ansi reset) ($path)"
+        return $"(ansi red)󰉋 ($path)(ansi reset)"
     } else {
         let exact_file = ($icons.files | where name == $name | first | default null)
         let match_file = if $exact_file != null {
@@ -48,7 +48,7 @@ def --wrapped ls [...args] {
         return
     }
 
-    let result = (nu -c $"ls ($args | str join ' ') | to nuon" | complete)
+    let result = (nu -c $"ls -t ($args | str join ' ') | to nuon" | complete)
 
     if $result.exit_code != 0 {
         print -e $result.stderr
