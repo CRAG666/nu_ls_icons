@@ -1,0 +1,88 @@
+def decorate-file [input] {
+    let is_record = ($input | describe | str starts-with "record")
+    let path = if $is_record { $input.name } else { $input }
+    let name = ($path | path basename)
+    let is_dir = if $is_record {
+        ($input.type? == "dir")
+    } else {
+        try { ($path | path type) == 'dir' } catch { false }
+    }
+
+    let theme = (open $env.LSI_THEME_PATH)
+    let icons = ($theme | get -o icon | default { dirs: [], files: [], exts: [] })
+
+    if $is_dir {
+        let match = ($icons.dirs | where name == $name | first | default null)
+        if $match != null {
+            let hex = ($match | get -o fg | default "#50fa7b")
+            return $"(ansi $hex)($match.text)(ansi reset) ($path)"
+        }
+        return $"(ansi blue)󰉋(ansi reset) ($path)"
+    } else {
+        let exact_file = ($icons.files | where name == $name | first | default null)
+        let match_file = if $exact_file != null {
+            $exact_file
+        } else {
+            $icons.files | where {|it| ($it.name | str downcase) == ($name | str downcase)} | first | default null
+        }
+
+        if $match_file != null {
+            let hex = ($match_file | get -o fg | default "#f8f8f2")
+            return $"(ansi $hex)($match_file.text)(ansi reset) ($path)"
+        }
+
+        let ext = ($name | path parse | get extension | default "" | str downcase)
+        let match_ext = ($icons.exts | where name == $ext | first | default null)
+        if $match_ext != null {
+            let hex = ($match_ext | get -o fg | default "#f8f8f2")
+            return $"(ansi $hex)($match_ext.text)(ansi reset) ($path)"
+        }
+    }
+
+    return $path
+}
+
+def --wrapped ls [...args] {
+    if ($args | any {|it| $it in ["-h" "--help"]}) {
+        nu -c $"ls ($args | str join ' ')"
+        return
+    }
+
+    let result = (nu -c $"ls ($args | str join ' ') | to nuon" | complete)
+
+    if $result.exit_code != 0 {
+        print -e $result.stderr
+        return
+    }
+
+    let data = ($result.stdout | from nuon)
+
+    if ($data | describe | str starts-with "table") {
+        $data | update name {|row| decorate-file $row }
+    } else {
+        $data
+    }
+}
+
+def gst [] {
+    git status --short --porcelain
+    | lines
+    | each {|line|
+        let status = ($line | str substring 0..2)
+        let file = ($line | str substring 3..)
+        let icon = match $status {
+            " M" => $"(ansi yellow)(ansi reset)",           # Modified (unstaged)
+            "M " => $"(ansi yellow)(ansi reset)",           # Modified (staged)
+            "MM" => $"(ansi yellow)(ansi reset)",           # Modified (both)
+            "A " => $"(ansi green)(ansi reset)",            # Added
+            "AM" => $"(ansi green)(ansi yellow)(ansi reset)", # Added + modified
+            " D" => $"(ansi red)(ansi reset)",              # Deleted (unstaged)
+            "D " => $"(ansi red)(ansi reset)",              # Deleted (staged)
+            "R " => $"(ansi purple)﯇(ansi reset)",          # Renamed
+            "??" => $"(ansi cyan)(ansi reset)",             # Untracked
+            "UD" | "DU" => $"(ansi red)(ansi reset)",       # Conflict
+            _ => $status
+        }
+        $"($icon) (decorate-file $file)"
+    }
+}

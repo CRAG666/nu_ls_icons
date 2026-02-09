@@ -1,4 +1,4 @@
-# nu_ls_icons
+# Nushell ls Icons
 
 `nu_ls_icons` is a Nushell script that enhances the standard `ls` command by adding custom icons and colors to file and directory names. This provides a more visually informative and aesthetically pleasing terminal experience.
 
@@ -13,6 +13,8 @@
 ### Prerequisites
 
 - [Nushell](https://www.nushell.sh/)
+- [Yazi theme](https://github.com/sxyazi/yazi/blob/main/yazi-config/preset/theme-dark.toml)
+- [Nerd Fonts](https://www.nerdfonts.com/)
 
 ### Steps
 
@@ -20,55 +22,16 @@
     Save the `lsi.nu` file to a convenient location, for example, `~/.config/nushell/lsi.nu`.
 
     ```bash
-    mkdir -p ~/.config/nushell
-    cp lsi.nu ~/.config/nushell/lsi.nu
+    curl -fsSL https://raw.githubusercontent.com/CRAG666/nu_ls_icons/main/archivo.nu | save ~/.config/nushell/archivo.nu
     ```
 
 2.  **Source the Script:**
     Add the following line to your Nushell configuration file (`config.nu`, usually located at `~/.config/nushell/config.nu`) to source the script:
 
     ```nushell
+    $env.LSI_THEME_PATH = "~/.config/yazi/theme.toml"
     source ~/.config/nushell/lsi.nu
     ```
-
-3.  **Create a Theme File (Example):**
-    Create a JSON file for your icon theme. For example, `~/.config/nushell/lsi_theme.json`:
-
-    ```json
-    {
-      "icon": {
-        "dirs": [
-          { "name": "nu_ls_icons", "text": "󰉋", "fg": "#50fa7b" }
-        ],
-        "files": [
-          { "name": "lsi.nu", "text": "", "fg": "#8be9fd" },
-          { "name": "README.md", "text": "", "fg": "#bd93f9" }
-        ],
-        "exts": [
-          { "name": "nu", "text": "", "fg": "#8be9fd" },
-          { "name": "md", "text": "", "fg": "#bd93f2" },
-          { "name": "png", "text": "", "fg": "#ffb86c" },
-          { "name": "json", "text": "", "fg": "#e6e6e6" }
-        ]
-      }
-    }
-    ```
-
-4.  **Set the Theme Path:**
-    Set the `LSI_THEME_PATH` environment variable in your `config.nu` to point to your theme file:
-
-    ```nushell
-    $env.LSI_THEME_PATH = "~/.config/nushell/lsi_theme.json"
-    ```
-
-5.  **Alias `ls` (Optional but Recommended):**
-    To automatically use the enhanced `ls` command, add this alias to your `config.nu`:
-
-    ```nushell
-    alias ls = ls --wrapped
-    ```
-
-    *Remember to restart your Nushell session or `source config.nu` for changes to take effect.*
 
 ## Usage
 
@@ -76,6 +39,12 @@ Once installed, simply use the `ls` command as you normally would. The output wi
 
 ```bash
 ls -la
+```
+
+aditionally you can use the `gst` command for git status.
+
+```bash
+gst
 ```
 
 ## Screenshots
@@ -86,3 +55,9 @@ Here are some examples of `nu_ls_icons` in action:
 ![Screenshot 2](.show_case/2026-02-09-001532_hyprshot.png)
 ![Screenshot 3](.show_case/2026-02-09-001546_hyprshot.png)
 ![Screenshot 4](.show_case/2026-02-09-001617_hyprshot.png)
+
+## Contributing
+
+**Pull requests are welcome!** If you have improvements, bug fixes, or new features, feel free to submit a PR directly instead of opening an issue. This helps move things forward faster.
+
+If you're not sure about something, you can still open a discussion or issue, but PRs are preferred.
