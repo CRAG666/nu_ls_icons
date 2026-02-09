@@ -67,8 +67,12 @@ def --wrapped ls [...args] {
 def gst [] {
   git status --short --porcelain
   | lines
-  | parse "{status}{file}"
-  | update status { |row|
+  | each { |line|
+      let status = ($line | str substring 0..1)  # Solo 2 caracteres
+      let file = ($line | str substring 3..)
+      {status: $status, file: $file}
+  }
+  | upsert status { |row|
       match $row.status {
         " M" => $"(ansi yellow)(ansi reset)",
         "A " => $"(ansi green)(ansi reset)",
