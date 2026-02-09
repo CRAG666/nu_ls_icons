@@ -67,25 +67,21 @@ def --wrapped ls [...args] {
 def gst [] {
   git status --short --porcelain
   | lines
-  | each { |line|
-      let status = ($line | str substring 0..1)
-      let file = ($line | str substring 3..)
-      {status: $status, file: $file}
-  }
+  | parse "{status}{file}"
   | update status { |row|
       match $row.status {
-        " M" => $"(ansi yellow)✎(ansi reset)"
-        "A " => $"(ansi green)✚(ansi reset)"
-        " D" => $"(ansi red)✖(ansi reset)"
-        "??" => $"(ansi cyan)?(ansi reset)"
-        "MM" => $"(ansi yellow)✎(ansi reset)"
-        "AM" => $"(ansi green)✚(ansi yellow)✎(ansi reset)"
-        "M " => $"(ansi green)✎(ansi reset)"
-        "D " => $"(ansi green)✖(ansi reset)"
-        "R " => $"(ansi purple)﯇(ansi reset)"
-        "UD" | "DU" => $"(ansi red)⚠(ansi reset)"
+        " M" => $"(ansi yellow)(ansi reset)",
+        "A " => $"(ansi green)(ansi reset)",
+        " D" => $"(ansi red)(ansi reset)",
+        "??" => $"(ansi cyan)(ansi reset)",,
+        "MM" => $"(ansi yellow)(ansi reset)",
+        "AM" => $"(ansi green)(ansi yellow)(ansi reset)",
+        "M " => $"(ansi green)✎(ansi reset)",
+        "D " => $"(ansi green)✖(ansi reset)",
+        "R " => $"(ansi purple)﯇(ansi reset)",
+        "UD" | "DU" => $"(ansi red)(ansi reset)",
         _ => $row.status
       }
   }
-  | update file { |row| decorate-file $row.file }
+  | upsert file { |row| decorate-file $row.file }
 }
