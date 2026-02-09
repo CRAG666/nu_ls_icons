@@ -68,7 +68,7 @@ def gst [] {
   git status --short --porcelain
   | lines
   | parse "{status}{file}"
-  | upsert status { |row|
+  | update status { |row|
       match $row.status {
         " M" => $"(ansi yellow)✎(ansi reset)"
         "A " => $"(ansi green)✚(ansi reset)"
@@ -83,5 +83,5 @@ def gst [] {
         _ => $row.status
       }
   }
-  | upsert file { |row| decorate-file $row.file }
+  | update file { |row| decorate-file $row.file }
 }
