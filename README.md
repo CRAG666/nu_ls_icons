@@ -29,7 +29,7 @@
     Add the following line to your Nushell configuration file (`config.nu`, usually located at `~/.config/nushell/config.nu`) to source the script:
 
     ```nushell
-    $env.LSI_THEME_PATH = "~/.config/yazi/theme.toml"
+    $env.LSI_THEME_PATH = $"($env.HOME)/.config/yazi/theme.toml"
     source ~/.config/nushell/lsi.nu
     ```
 
