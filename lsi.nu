@@ -65,24 +65,23 @@ def --wrapped ls [...args] {
 }
 
 def gst [] {
-    git status --short --porcelain
-    | lines
-    | each {|line|
-        let status = ($line | str substring 0..2)
-        let file = ($line | str substring 3..)
-        let icon = match $status {
-            " M" => $"(ansi yellow)(ansi reset)",           # Modified (unstaged)
-            "M " => $"(ansi yellow)(ansi reset)",           # Modified (staged)
-            "MM" => $"(ansi yellow)(ansi reset)",           # Modified (both)
-            "A " => $"(ansi green)(ansi reset)",            # Added
-            "AM" => $"(ansi green)(ansi yellow)(ansi reset)", # Added + modified
-            " D" => $"(ansi red)(ansi reset)",              # Deleted (unstaged)
-            "D " => $"(ansi red)(ansi reset)",              # Deleted (staged)
-            "R " => $"(ansi purple)﯇(ansi reset)",          # Renamed
-            "??" => $"(ansi cyan)(ansi reset)",             # Untracked
-            "UD" | "DU" => $"(ansi red)(ansi reset)",       # Conflict
-            _ => $status
-        }
-        $"($icon) (decorate-file $file)"
-    }
+  git status --short --porcelain
+  | lines
+  | parse "{status}{file}"
+  | upsert status { |row|
+      match $row.status {
+        " M" => $"(ansi yellow)✎(ansi reset)"
+        "A " => $"(ansi green)✚(ansi reset)"
+        " D" => $"(ansi red)✖(ansi reset)"
+        "??" => $"(ansi cyan)?(ansi reset)"
+        "MM" => $"(ansi yellow)✎(ansi reset)"
+        "AM" => $"(ansi green)✚(ansi yellow)✎(ansi reset)"
+        "M " => $"(ansi green)✎(ansi reset)"
+        "D " => $"(ansi green)✖(ansi reset)"
+        "R " => $"(ansi purple)﯇(ansi reset)"
+        "UD" | "DU" => $"(ansi red)⚠(ansi reset)"
+        _ => $row.status
+      }
+  }
+  | upsert file { |row| decorate-file $row.file }
 }
